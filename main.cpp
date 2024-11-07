@@ -14,19 +14,18 @@ void setup(){
     radio.enableAckPayload();
     radio.setPayloadSize(32);
 
-    radio.openReadingPipe(1, address[0]);
+    radio.openWritingPipe(address[0]);
     radio.setChannel(0x08);
     radio.setPALevel (RF24_PA_MAX);
     radio.setDataRate(RF24_250KBPS);
     radio.powerUp();
-    radio.startListening();
+    radio.stopListening();
 }
 
 void loop(){
     radio.powerUp();
-    byte pipeN, gotByte; 
-    while (radio.available(&pipeN)){
-        radio.read(&gotByte, 1);
-        Serial.println("Recieve: "); Serial.println(gotByte);
-    }
+    Serial.println("Sent: "); Serial.println(counter);
+    radio.write(&counter, 1);
+    counter++;
+    delay(10);
 }
