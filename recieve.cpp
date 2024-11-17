@@ -2,31 +2,38 @@
 #include "nRF24L01.h"
 #include "RF24.h"
 
-RF24 radio(12, 14);
-byte counter;
-byte address[][6] = {"1Node", "2Node", "3Node", "4Node", "5Node", "6Node"};
+RF24 radio(4, 5);
+byte num;
+const byte address[6] = { 0x31, 0x4E, 0x6F, 0x64, 0x65 };
+long weight;
 
 void setup(){
     Serial.begin(115200);
+    Serial.println("Setup");
     radio.begin();
-    radio.setAutoAck(1);
-    radio.setRetries(0, 10);
-    radio.enableAckPayload();
-    radio.setPayloadSize(32);
-
-    radio.openReadingPipe(1, address[0]);
-    radio.setChannel(0x08);
-    radio.setPALevel (RF24_PA_MAX);
-    radio.setDataRate(RF24_250KBPS);
-    radio.powerUp();
+    radio.setChannel(76);
+    
+    radio.setPALevel(RF24_PA_LOW);
+    radio.setDataRate(RF24_1MBPS);
+    radio.openReadingPipe(1, address);
     radio.startListening();
+    radio.printDetails();
 }
 
 void loop(){
-    radio.powerUp();
-    byte pipeN, gotByte; 
-    while (radio.available(&pipeN)){
-        radio.read(&gotByte, 1);
-        Serial.println("Recieve: "); Serial.println(gotByte);
+    
+    if (radio.available()){
+        radio.read(&weight, sizeof(weight));
+        //Serial.println(weight);
+        //if (num == 117){
+            //Serial.println("good");
+            //delay(500);
+        //}
+        //else{
+            //Serial.println(num);
+        //}
+    }
+    else{
+        Serial.println("not");
     }
 }
